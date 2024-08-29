@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Marketing Agency</title>
+</head>
+
+<body>
+    <h1>AI Marketing Agency</h1>
+    <form id="adForm">
+        <label for="productDescription">Product Description:</label><br>
+        <textarea id="productDescription" name="productDescription" rows="4" cols="50"></textarea><br>
+        <button type="submit">Generate Ad</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('adForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const productDescription = document.getElementById('productDescription').value;
+            fetch('/generate-ad-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product_description: productDescription }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = `
+                    <h2>Generated Ad</h2>
+                    <p>${data.ad_copy}</p>
+                    <img src="data:image/png;base64,${data.image}" alt="Generated Ad Image" style="max-width: 500px;">
+                `;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

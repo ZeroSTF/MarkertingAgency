@@ -1,0 +1,21 @@
+meta {
+  name: Facebook - Create and Post
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:5000/create-ad
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "product_description": "Eco-friendly water bottle that keeps drinks cold for 24 hours"
+  }
+}

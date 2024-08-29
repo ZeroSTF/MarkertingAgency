@@ -8,6 +8,12 @@ from datetime import datetime, timedelta
 import base64
 from io import BytesIO
 
+from flask import render_template
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/generate-ad-content', methods=['POST'])
 def generate_ad_content():
     data = request.json
@@ -45,6 +51,9 @@ def create_ad():
     data = request.json
     product_description = data.get('product_description')
 
+    if not product_description:
+        return jsonify({"error": "Product description is required"}), 400
+
     ai_text_service = AiTextService(current_app.config['GEMINI_API_KEY'])
     image_service = ImageGenerationService(current_app.config['DALLE_API_KEY'])
     facebook_service = FacebookService(
@@ -52,31 +61,35 @@ def create_ad():
         current_app.config['FACEBOOK_AD_ACCOUNT_ID']
     )
 
-    # Generate ad copy
-    ad_copy = ai_text_service.generate_ad_copy(product_description)
+    try:
+        # Generate ad copy
+        ad_copy = ai_text_service.generate_ad_copy(product_description)
 
-    # Generate image
-    image = image_service.generate_image(product_description)
+        # Generate image
+        image = image_service.generate_image(product_description)
 
-    # Create Facebook ad
-    ad = facebook_service.create_ad(
-        image=image,
-        ad_copy=ad_copy,
-        title=f"New Product: {product_description[:30]}",
-        link="https://your-product-link.com"
-    )
+        # Create Facebook ad
+        ad = facebook_service.create_ad(
+            image=image,
+            ad_copy=ad_copy,
+            title=f"New Product: {product_description[:30]}",
+            link="https://your-product-link.com"
+        )
 
-    return jsonify({
-        "message": "Ad created successfully",
-        "ad_id": ad['id'],
-        "ad_copy": ad_copy
-    })
+        return jsonify({
+            "message": "Ad created successfully",
+            "ad_id": ad['id'],
+            "ad_copy": ad_copy
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/create-ab-test', methods=['POST'])
 def create_ab_test():
     # Create multiple ad variations and track performance
     pass
 
+# Scheduler for posting ads
 @app.route('/schedule-ad', methods=['POST'])
 def schedule_ad():
     data = request.json
