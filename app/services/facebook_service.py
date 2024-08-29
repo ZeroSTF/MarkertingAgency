@@ -4,6 +4,7 @@ from facebook_business.adobjects.adimage import AdImage
 from facebook_business.adobjects.adcreative import AdCreative
 from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.campaign import Campaign
+from io import BytesIO
 
 class FacebookService:
     def __init__(self, access_token, ad_account_id):

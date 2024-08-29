@@ -6,3 +6,8 @@ google-auth-oauthlib
 google-auth-httplib2
 facebook-business
 Pillow
+celery
+redis
+stripe
+matplotlib
+pandas
